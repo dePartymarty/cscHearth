@@ -1,69 +1,42 @@
-#include "Card.hpp"
-#include "LinkedList.hpp"
 #include "URL.hpp"
 #include <iostream>
 #include <string>
 #include <stdlib.h>
 #include "json.hpp"
+#include "LinkedList.hpp"
 
 using json = nlohmann::json;
 using namespace std;
-
-void insertionSort(int theCards[]);
 
 int main(int argc, char** argv)
 {
     URL* u1 = new URL("https://api.hearthstonejson.com/v1/25770/enUS/cards.json");
     string jsonString = u1->getContents();
     json parsedJson = json::parse(jsonString);
-    Card* theCards[parsedJson.size()];
+    LinkedList* theCards = new LinkedList();
 
-    int counter;
-
-  /*  if(parsedJson.is_array())
+    if(parsedJson.is_array())
     {
         for(int i = 0; i < parsedJson.size(); i++)
         {
             json currValue = parsedJson[i];
             if(currValue.is_object())
             {
-                string name = currValue.value("name", "N/A");
-                string type = currValue.value("type", "N/A");
-                int attack = currValue.value("attack", -1);
-                int defense = currValue.value("health", -1);
-                int manaCost = currValue.value("cost", -1);
+                string type =  currValue.value("type", "N/A");
                 if(type == "MINION")
                 {
-                theCards[i] = new Card(name, type, manaCost, attack, defense);
-                theCards[i]->display(); 
-                counter++;
-                }
-            }
-        }
-    } */
-
-     if(parsedJson.is_array())
-    {
-        for(int i = 0; i < parsedJson.size(); i++)
-        {
-            json currValue = parsedJson[i];
-            if(currValue.is_object())
-            {
-                string name = currValue.value("name", "N/A");
-                string type = currValue.value("type", "N/A");
-                int attack = currValue.value("attack", -1);
-                int defense = currValue.value("health", -1);
-                int manaCost = currValue.value("cost", -1);
-                if(type == "MINION")
-                {
-                theCards[i] = new Card(name, type, manaCost, attack, defense);
-                theCards[i]->display(); 
-                counter++;
+                    string name = currValue.value("name", "N/A");
+                    int attack = currValue.value("attack", -1);
+                    int defense = currValue.value("health", -1);
+                    int manaCost = currValue.value("cost", -1);
+                    theCards->addEnd(new Card(name, manaCost, attack, defense));
+                    
                 }
             }
         }
     }
-    // cout << "Number of Cards: " << parsedJson.size() << endl;
-    cout << "Number of Minion Cards: " << counter << endl;
+    theCards->insertionSortOnDefense();
+    theCards->display();
+    cout << "Number of Cards: " << theCards->getCount() << endl;
     return 0;
 }
